@@ -1,5 +1,24 @@
 local M = {}
 
+local path = require("plenary.path")
+
+--- Create a absolute path
+--- Expands ~ to home directory
+--- @param file_name string File name to expand
+--- @param buffer integer Buffer id of the markdown file (0 is current buffer)
+--- @return string Expanded file name
+local function expand_file_name(file_name, buffer)
+    local home = os.getenv("HOME")
+    if home ~= nil then
+        file_name = file_name:gsub("~", home)
+    end
+    if not file_name:match("^/") then
+        local buf_path = path:new(vim.api.nvim_buf_get_name(buffer))
+        file_name = buf_path:parent() .. "/" .. file_name
+    end
+    return file_name
+end
+
 --- Extract info from code block
 --- If the code block is not a literate code block, returns nil, nil
 --- @param match table<integer, TSNode> Match from query
@@ -13,7 +32,8 @@ local function extract_code_block(match, buffer)
         return nil, nil
     end
     local code = vim.treesitter.get_node_text(match[2], buffer)
-    return file, code
+    local expanded_file = expand_file_name(file, buffer)
+    return expanded_file, code
 end
 
 --- Extract code blocks from markdown file
@@ -50,7 +70,8 @@ end
 
 --- Export code blocks from markdown file to their source files
 function M.export_code_blocks()
-    local code_blocks = extract_code_blocks(0)
+    local buffer = 0
+    local code_blocks = extract_code_blocks(buffer)
 
     for file_name, blocks in pairs(code_blocks) do
         local file = io.open(file_name, "w")

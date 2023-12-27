@@ -7,7 +7,13 @@
 ## Installation
 
 ```lua
-{ "simondwall/literate_markdown.nvim", opts = {} }
+{ 
+    "simondwall/literate_markdown.nvim",
+    dependencies = {
+        "nvim-lua/plenary.nvim"
+    },
+    opts = {}
+}
 ```
 
 ## Usage
