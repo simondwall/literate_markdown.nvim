@@ -7,12 +7,23 @@
 ## Installation
 
 ```lua
-{ 
+{
     "simondwall/literate_markdown.nvim",
     dependencies = {
         "nvim-lua/plenary.nvim"
     },
-    opts = {}
+    opts = {
+        export_on_save = true,
+    }
+}
+```
+
+## Default Options
+
+The default options are:
+```lua
+{
+    export_on_save = false,
 }
 ```
 
@@ -21,12 +32,15 @@
 Add the file path to the code block you want to write to.
 
 ````markdown
-Install literate_markdown.nvim.
+Simple Hello World
+This is going to be saved to hello_world.lua
 
-```lua file="lua/user/plugins.lua"
-require('lazy').setup({
-    { "simondwall/literate_markdown.nvim", opts = {} }
-})
+```lua file="hello_world.lua"
+function main()
+    print("Hello, World!")
+end
+
+main()
 ```
 ````
 
